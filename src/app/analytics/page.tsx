@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { AnalyticsIcon, ArrowLeftIcon } from "@/components/icons";
+import { AnalyticsIcon, ArrowLeftIcon, TrashIcon } from "@/components/icons";
 
 interface QuestionRow {
   question: string;
@@ -115,6 +115,16 @@ export default function AnalyticsPage() {
   const maxBaseline = Math.max(1, ...onQuestions.map((q) => q.baselineTokens));
   const maxLatency = Math.max(1, ...questions.map((q) => q.elapsedMs));
 
+  async function handleReset() {
+    if (!window.confirm("Clear all documents, questions, and savings to start a fresh session?")) return;
+    try {
+      const res = await fetch("/api/reset", { method: "POST" });
+      if (res.ok) window.location.reload();
+    } catch {
+      // leave session as-is
+    }
+  }
+
   return (
     <main className="flex min-h-0 flex-1 flex-col overflow-y-auto">
       <div className="mx-auto w-full max-w-5xl px-6 py-8 sm:px-10">
@@ -126,9 +136,20 @@ export default function AnalyticsPage() {
           Back to session
         </Link>
 
-        <header className="mt-4 flex items-center gap-2.5">
-          <AnalyticsIcon className="size-5 text-ink-2" />
-          <h1 className="text-2xl font-semibold tracking-tight text-ink">Analytics</h1>
+        <header className="mt-4 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <AnalyticsIcon className="size-5 text-ink-2" />
+            <h1 className="text-2xl font-semibold tracking-tight text-ink">Analytics</h1>
+          </div>
+          <button
+            type="button"
+            onClick={handleReset}
+            title="Reset session"
+            aria-label="Reset session"
+            className="flex size-8 items-center justify-center rounded-full text-red-500/60 transition-colors hover:bg-surface-hover hover:text-red-500"
+          >
+            <TrashIcon className="size-4" />
+          </button>
         </header>
         <p className="mt-1.5 text-sm text-ink-3">
           Measured Paritok impact across your session — real token, cost, and latency numbers.
