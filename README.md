@@ -135,4 +135,12 @@ Example (from `examples/transcript.md`):
 
 Built for the **Paritok token-efficiency hackathon**. Compression runs on Paritok's hosted
 GPU server and is measured against a real uncompressed baseline — no synthetic numbers.
+
+Built with [Paritok](https://github.com/Paritok-official/paritok-4b-v1).
+
+[![Built with Paritok](https://img.shields.io/badge/Built%20with-Paritok-1f2d3d)](https://github.com/Paritok-official/paritok-4b-v1)
+
+> CAPS integrates Paritok's **hosted Compress API** directly (`POST https://www.paritok.com/api/compress`)
+> rather than the local CLI proxy — a natural fit for a web app.
+
 License: Apache-2.0.
