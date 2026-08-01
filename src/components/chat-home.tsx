@@ -209,7 +209,7 @@ export default function ChatHome() {
 
       {/* Right sidebar: session statistics */}
       <aside className="w-[320px] shrink-0 border-l border-line/70 bg-sidebar-surface/40 p-5 flex flex-col overflow-y-auto hidden lg:flex">
-        <SessionStats />
+        <SessionStats paritokOn={paritokOn} />
       </aside>
     </div>
   );

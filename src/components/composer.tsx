@@ -116,6 +116,11 @@ export default function Composer({
           </button>
         </div>
       </div>
+      <p className="mt-1.5 text-center text-[10px] font-medium text-ink-3">
+        {paritokOn
+          ? "Paritok ON — compresses your next question"
+          : "Paritok OFF — your next question is not compressed"}
+      </p>
     </div>
   );
 }

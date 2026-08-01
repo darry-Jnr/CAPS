@@ -25,9 +25,13 @@ const fmtMs = (n: number) => `${Math.round(n).toLocaleString("en-US")}ms`;
 const fmtUsd = (n: number) =>
   n >= 0.01 ? `$${n.toFixed(2)}` : `$${n.toFixed(4)}`;
 
-function Row({ label, value, highlight = false }: { label: string; value: string; highlight?: boolean }) {
+function Row({ label, value, highlight = false, dim = false }: { label: string; value: string; highlight?: boolean; dim?: boolean }) {
   return (
-    <div className="flex items-baseline justify-between gap-3 text-[13px]">
+    <div
+      className={`flex items-baseline justify-between gap-3 text-[13px] transition-opacity duration-300 ${
+        dim ? "opacity-40" : ""
+      }`}
+    >
       <span className="text-ink-3">{label}</span>
       <span className={`tabular-nums ${highlight ? "font-semibold text-emerald-500" : "font-medium text-ink"}`}>
         {value}
@@ -58,7 +62,7 @@ const empty: StatsSnapshot = {
   paritokConfigured: false,
 };
 
-export default function SessionStats() {
+export default function SessionStats({ paritokOn }: { paritokOn: boolean }) {
   const [stats, setStats] = useState<StatsSnapshot>(empty);
 
   useEffect(() => {
@@ -113,7 +117,7 @@ export default function SessionStats() {
         <SectionLabel>Token Usage</SectionLabel>
         <div className="mt-2 flex flex-col gap-1.5">
           <Row label="Without Paritok" value={`${fmtInt(stats.tokensWithout)} tokens`} />
-          <Row label="With Paritok" value={`${fmtInt(stats.tokensWith)} tokens`} />
+          <Row label="With Paritok" value={`${fmtInt(stats.tokensWith)} tokens`} dim={!paritokOn} />
         </div>
         <div className="mt-2 flex items-baseline justify-between gap-3 border-t border-line/60 pt-2 text-[13px]">
           <span className="font-semibold text-ink">Total Saved</span>
@@ -158,7 +162,7 @@ export default function SessionStats() {
           </div>
         </div>
 
-        <div>
+        <div className={`transition-opacity duration-300 ${paritokOn ? "" : "opacity-40"}`}>
           <div className="mb-1 flex items-baseline justify-between gap-3 text-[13px]">
             <span className="text-ink-3">With Paritok</span>
             <span className="tabular-nums font-semibold text-ink">

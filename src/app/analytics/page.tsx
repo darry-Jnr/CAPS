@@ -285,7 +285,13 @@ export default function AnalyticsPage() {
                           <ModeBadge mode={q.mode} />
                         </td>
                         <td className="py-2.5 pr-4 text-right tabular-nums">{fmtInt(q.baselineTokens)}</td>
-                        <td className="py-2.5 pr-4 text-right tabular-nums">{fmtInt(q.promptTokens)}</td>
+                        <td className="py-2.5 pr-4 text-right tabular-nums">
+                          {q.mode === "off" ? (
+                            <span className="text-ink-3/60">—</span>
+                          ) : (
+                            fmtInt(q.promptTokens)
+                          )}
+                        </td>
                         <td className="py-2.5 pr-4 text-right tabular-nums font-semibold text-emerald-500">
                           {q.savedTokens > 0 ? `-${fmtInt(q.savedTokens)} (${q.savedPercent.toFixed(0)}%)` : "—"}
                         </td>
