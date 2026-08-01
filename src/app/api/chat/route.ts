@@ -61,13 +61,15 @@ export async function POST(request: Request) {
   let contextText = originalContext;
   let compression: { originalTokens: number; compressedTokens: number } | undefined;
   let fallbackReason: string | undefined;
+  let paritokGpuAvailable: boolean | undefined;
 
   if (paritokOn && selected.length > 0) {
     try {
-      const compressed = await Promise.all(
+      const results = await Promise.all(
         selected.map((chunk) => compressSegment(chunk, question, "file_read")),
       );
-      contextText = compressed.map((c) => c.compressed).join("\n\n");
+      contextText = results.map((c) => c.compressed).join("\n\n");
+      paritokGpuAvailable = results.length > 0 && results.every((r) => r.gpu_available);
       compression = {
         originalTokens: estimateTokens(originalContext),
         compressedTokens: estimateTokens(contextText),
@@ -132,6 +134,7 @@ export async function POST(request: Request) {
     elapsedMs: Date.now() - startedAt,
     compression,
     fallbackReason,
+    paritokGpuAvailable,
     study,
     doc: doc ? { name: doc.name, chunks: doc.chunks.length } : undefined,
   });

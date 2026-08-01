@@ -90,6 +90,19 @@ export default function SessionStats() {
         Session
       </h2>
 
+      <div
+        className={`mt-3 inline-flex w-fit items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold ${
+          stats.paritokConfigured
+            ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-500"
+            : "border-line bg-surface text-ink-3"
+        }`}
+      >
+        <span
+          className={`size-1.5 rounded-full ${stats.paritokConfigured ? "bg-emerald-500" : "bg-ink-3"}`}
+        />
+        {stats.paritokConfigured ? "Paritok: connected" : "Paritok: not configured"}
+      </div>
+
       {!hasData && (
         <p className="mt-4 rounded-xl border border-line bg-surface p-3 text-xs leading-relaxed text-ink-3">
           No questions yet. Ask one with Paritok ON and OFF to see real token and cost savings.

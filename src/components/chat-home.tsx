@@ -19,6 +19,7 @@ interface ChatResponse {
   elapsedMs: number;
   fallbackReason?: string;
   compression?: { originalTokens: number; compressedTokens: number };
+  paritokGpuAvailable?: boolean;
   study?: StudyContent;
 }
 
@@ -31,6 +32,7 @@ export default function ChatHome() {
   const [paritokOn, setParitokOn] = useState(true);
   const [study, setStudy] = useState<StudyContent | null>(null);
   const [isPaneOpen, setIsPaneOpen] = useState(false);
+  const [gpuNote, setGpuNote] = useState<string | null>(null);
 
   async function handleUploadFile(file: File) {
     setUploading(true);
@@ -76,6 +78,15 @@ export default function ChatHome() {
       if (data.study) {
         setStudy(data.study);
         setIsPaneOpen(true);
+      }
+      if (data.paritokGpuAvailable && data.compression) {
+        const pct =
+          data.compression.originalTokens > 0
+            ? Math.max(0, (1 - data.compression.compressedTokens / data.compression.originalTokens) * 100)
+            : 0;
+        setGpuNote(`compressed on Paritok GPU — ${pct.toFixed(0)}% fewer tokens`);
+      } else {
+        setGpuNote(null);
       }
     } catch (error) {
       setMessages((prev) => [...prev, { role: "ai", content: `Network error: ${error instanceof Error ? error.message : "unknown"}`, error: true }]);
@@ -130,6 +141,12 @@ export default function ChatHome() {
                 <div className="flex items-center gap-2 text-ink-3">
                   <span className="size-2 animate-pulse rounded-full bg-ink-3" />
                   <span className="text-xs font-medium">CAPS is thinking…</span>
+                </div>
+              )}
+              {gpuNote && !loading && (
+                <div className="inline-flex w-fit items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-medium text-emerald-500">
+                  <span className="size-1.5 rounded-full bg-emerald-500" />
+                  {gpuNote}
                 </div>
               )}
             </div>
