@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { SessionIcon, ArrowUpRightIcon } from "@/components/icons";
+import { SessionIcon, ArrowUpRightIcon, TrashIcon } from "@/components/icons";
 
 interface StatsSnapshot {
   docsUploaded: number;
@@ -87,6 +87,16 @@ export default function SessionStats({ paritokOn }: { paritokOn: boolean }) {
   const maxLatency = Math.max(stats.latencyWithoutMs.avg, stats.latencyWithMs.avg, 1);
   const reduction = maxLatency > 0 ? Math.max(0, ((stats.latencyWithoutMs.avg - stats.latencyWithMs.avg) / maxLatency) * 100) : 0;
 
+  async function handleReset() {
+    if (!window.confirm("Clear all documents, questions, and savings to start a fresh session?")) return;
+    try {
+      const res = await fetch("/api/reset", { method: "POST" });
+      if (res.ok) window.location.reload();
+    } catch {
+      // leave session as-is
+    }
+  }
+
   return (
     <div className="flex flex-col">
       <h2 className="flex items-center gap-2 text-sm font-semibold text-ink">
@@ -141,6 +151,14 @@ export default function SessionStats({ paritokOn }: { paritokOn: boolean }) {
           Analytics
           <ArrowUpRightIcon className="size-3.5 text-ink-3" />
         </Link>
+        <button
+          type="button"
+          onClick={handleReset}
+          className="mt-2 flex items-center justify-between rounded-xl border border-line bg-surface px-3 py-2 text-xs font-semibold text-red-500/80 transition-colors hover:border-red-500/30 hover:text-red-500"
+        >
+          Reset session
+          <TrashIcon className="size-3.5" />
+        </button>
         <Row label="Documents" value={`${stats.docsUploaded} (${fmtInt(stats.chunksStored)} chunks)`} />
       </div>
 

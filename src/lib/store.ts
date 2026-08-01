@@ -176,6 +176,25 @@ export const storeApi = {
     memory.questions.push(q);
   },
 
+  async resetSession() {
+    if (kvConfigured()) {
+      const chunkKeys: string[] = [];
+      for await (const key of kv.scanIterator({ match: `${PREFIX}:chunk:*` })) {
+        chunkKeys.push(key);
+      }
+      const pipeline = kv.pipeline();
+      pipeline.del(docsKey());
+      pipeline.del(questionsKey());
+      for (const key of chunkKeys) {
+        pipeline.del(key);
+      }
+      await pipeline.exec();
+      return;
+    }
+    memory.docs.clear();
+    memory.questions = [];
+  },
+
   async getAnalytics() {
     const { docs, questions } = await loadAll();
     const stats = computeStats(docs, questions);
