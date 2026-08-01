@@ -3,5 +3,5 @@ import { storeApi } from "@/lib/store";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  return Response.json(storeApi.getStats());
+  return Response.json(await storeApi.getStats());
 }

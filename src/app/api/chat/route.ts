@@ -12,6 +12,7 @@ import {
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 const WITH_DOC_SYSTEM =
   "You are CAPS, a study assistant for students. Answer the student's question using ONLY the document context provided. If the context does not contain the answer, say so plainly. Be concise and clear.";
@@ -42,7 +43,7 @@ export async function POST(request: Request) {
   const docId = body.docId;
   const paritokOn = body.paritokOn ?? true;
   const question = [...messages].reverse().find((m) => m.role === "user")?.content ?? "";
-  const doc = docId ? storeApi.getDocument(docId) : undefined;
+  const doc = docId ? await storeApi.getDocument(docId) : undefined;
   const intent = detectStudyIntent(question);
 
   if (intent && !doc) {
@@ -112,7 +113,7 @@ export async function POST(request: Request) {
     baselineTokens = usage.prompt_tokens + delta;
   }
 
-  storeApi.addQuestion({
+  await storeApi.addQuestion({
     id: randomUUID(),
     askedAt: Date.now(),
     mode: paritokOn ? "on" : "off",

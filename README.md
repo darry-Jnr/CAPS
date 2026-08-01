@@ -71,6 +71,7 @@ bun run dev        # http://localhost:3000
 | --- | --- |
 | `GROQ_API_KEY` | Your Groq key (https://console.groq.com/keys) |
 | `PARITOK_API_KEY` | Your Paritok key (https://paritok.com) |
+| `KV_REST_API_URL` / `KV_REST_API_TOKEN` | Vercel KV credentials — only needed when deployed (local dev uses an in-memory store) |
 | `GROQ_MODEL` | Model to answer with (default `llama-3.3-70b-versatile`) |
 | `GROQ_INPUT_PRICE_PER_1M` | Input token price in USD per 1M (default `0.59`) |
 | `GROQ_OUTPUT_PRICE_PER_1M` | Output token price in USD per 1M (default `0.79`) |
@@ -78,6 +79,18 @@ bun run dev        # http://localhost:3000
 > The proxy call to Paritok's hosted GPU is `POST https://www.paritok.com/api/compress`
 > with `{ "content", "query", "kind": "file_read" }` → `{ "compressed", "gpu_available" }`.
 > Compressed segments are cached per (content-hash, query) so repeated questions are instant.
+
+## Deploy to Vercel
+
+1. Push this repo to GitHub.
+2. Import it at [vercel.com](https://vercel.com/new) — Next.js is auto-detected.
+3. In your Vercel project, **Storage → Create Database → KV** (free tier).
+4. Add the environment variables (Project Settings → Environment Variables):
+   `GROQ_API_KEY`, `PARITOK_API_KEY`, plus the KV credentials Vercel offers to connect.
+5. Deploy. The app persists docs/questions in Vercel KV instead of memory.
+
+> Note: the first question after a cold start can take ~30s (Paritok GPU warm-up);
+> the free tier may time it out — just ask again.
 
 ## Project structure
 
@@ -99,7 +112,7 @@ src/
     groq.ts             # Groq chat completions + token/cost math
     pdf.ts              # PDF extraction + chunking
     retrieval.ts        # query-aware chunk selection
-    store.ts            # in-memory docs/questions + stats aggregation
+    store.ts            # Vercel KV store (in-memory fallback) + stats aggregation
 examples/
   caps-sample.pdf       # sample PDF to try
   transcript.md         # example Q&A output

@@ -34,7 +34,7 @@ export async function POST(request: Request) {
 
     const chunks = chunkText(text);
     const docId = randomUUID();
-    storeApi.addDocument({ id: docId, name: file.name, chunks, uploadedAt: Date.now() });
+    await storeApi.addDocument({ id: docId, name: file.name, chunks, uploadedAt: Date.now() });
 
     return Response.json({ docId, name: file.name, chunks: chunks.length, chars: text.length });
   } catch (error) {
